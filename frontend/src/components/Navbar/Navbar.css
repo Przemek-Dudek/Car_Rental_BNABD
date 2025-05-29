@@ -1,0 +1,121 @@
+body.lock-scroll {
+  overflow: hidden;
+  padding-right: 0px !important;
+}
+
+.navbar {
+  background-color: greenyellow !important;
+}
+
+.navbar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100% !important;
+}
+
+.navbar-logo-desktop {
+  display: flex;
+  align-items: center;  
+}
+
+.navbar-mobile-header {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.navbar-menu-button {
+  margin-right: 8px;
+}
+
+.navbar-user-settings {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu {
+  margin-top: 45px;
+}
+
+.logo-icon-desktop {
+  height: 24px;
+  width: auto;
+  margin-right: 8px;
+}
+
+.logo-text-desktop {
+  margin-right: 16px;
+  font-family: monospace;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-icon-mobile {
+  flex-grow: 1;
+  display: flex;
+}
+
+.logo-icon-mobile {
+  height: 24px;
+  width: auto;
+  margin-right: 8px;
+  display: flex;
+}
+
+.logo-text-mobile {
+  margin-right: 16px;
+  display: flex;
+  flex-grow: 1;
+  font-family: monospace;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-buttons-desktop {
+  flex-grow: 1;
+}
+
+.menu-button {
+  margin: 16px 8px;
+  color: white !important;
+  display: block;
+  text-transform: none;
+}
+
+.menu-item-text {
+  text-align: center;
+  color: black;
+  text-decoration: none;
+  font-weight: bold !important;
+}
+
+.menu-item-text:hover {
+  text-decoration: underline;
+}
+
+.notifications-button {
+  margin-right: 16px;
+  color: white; 
+}
+
+.user-menu-option-text {
+  font-weight: bold !important;
+}
+
+@media (min-width: 900px) {
+  .logo-icon-desktop {
+    display: flex;
+  }
+
+  .logo-text-desktop {
+    display: flex;
+  }
+
+  .menu-buttons-desktop {
+    display: flex;
+  }
+}
