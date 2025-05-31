@@ -3,7 +3,8 @@ import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
 import MainPage from './pages/MainPage/MainPage.tsx'
 import CarAddPage from './pages/CarAddPage/CarAddPage.tsx'
 import Navbar from './components/Navbar/Navbar'
-import { mainPagePath, loginPagePath, carAddPagePath } from './shared/pagesPaths.ts';
+import { mainPagePath, loginPagePath, carAddPagePath, usersPagePath } from './shared/pagesPaths.ts';
+import UsersPage from './pages/UsersPage/UsersPage.tsx';
 
 function AppContent() {
   const location = useLocation();
@@ -14,6 +15,7 @@ function AppContent() {
       <Routes>
         <Route path={mainPagePath} element={<MainPage />} />
         <Route path={carAddPagePath} element={<CarAddPage />} />
+        <Route path={usersPagePath} element={<UsersPage/>} />
       </Routes>
     </>
   )
