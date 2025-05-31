@@ -1,0 +1,6 @@
+.reservations-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* wyśrodkowanie w poziomie */
+  text-align: center;
+}
