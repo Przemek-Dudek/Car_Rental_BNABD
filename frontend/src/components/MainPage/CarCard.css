@@ -1,0 +1,36 @@
+.car-card {
+  max-width: 360px;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.car-card__media {
+  height: 160px;
+}
+
+.car-card__content {
+  padding: 16px;
+}
+
+.car-card__title {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.car-card__description {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.car-card__info {
+  margin: 0.25rem 0;
+}
+
+.car-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+  gap: 0.5rem;
+}
