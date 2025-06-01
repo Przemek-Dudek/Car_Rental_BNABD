@@ -1,0 +1,46 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the Login header */
+}
+
+label {
+    display: flex;
+    justify-content: space-between; /* Keep label on the left and input on the right */
+    width: 100%;
+    font-weight: bold;
+    align-items: center; /* Aligns text and input vertically */
+}
+
+input {
+    width: 66.6%; /* Limits input width to two-thirds of the container */
+    padding: 10px; /* Adds spacing inside the input box */
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box; /* Ensures consistent sizing */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adds spacing between form elements */
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #568203; /* Your new color */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    display: block;
+    width: 60%; /* Make it take 60% of the form's width */
+    margin-left: auto;
+    margin-right: auto; /* Center it */
+    text-align: center;
+}
+
+button:hover {
+    background-color: #466602; /* Darker shade for hover */
+}

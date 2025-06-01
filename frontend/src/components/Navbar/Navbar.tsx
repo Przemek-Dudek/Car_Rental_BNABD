@@ -22,7 +22,7 @@ import { useTheme } from '@mui/material/styles';
 
 import appIcon from '../../assets/app_icon.png';
 import Badge from '@mui/material/Badge';
-import {mainPagePath, carAddPagePath, usersPagePath, reservationsPagePath} from "../../shared/pagesPaths.ts";
+import {mainPagePath, carAddPagePath, usersPagePath, reservationsPagePath, loginPagePath} from "../../shared/pagesPaths.ts";
 const Navbar = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -45,7 +45,7 @@ const Navbar = () => {
   const userSettings = [
     { title: 'Main Page', path: mainPagePath },
     { title: 'My Rents', path: '' },
-    { title: 'Logout', path: '' }
+    { title: 'Logout', path: loginPagePath }
   ];
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -82,6 +82,13 @@ React.useEffect(() => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    handleCloseUserMenu();
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    window.location.href = loginPagePath;
   };
 
   return (
@@ -209,7 +216,7 @@ React.useEffect(() => {
                   onClick={() => {
                     handleCloseUserMenu();
                     if (setting.title === 'Logout') {
-                      //handleLogout();
+                      handleLogout();
                     } 
                     else {
                       window.location.href = setting.path;

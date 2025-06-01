@@ -1,10 +1,10 @@
 body.lock-scroll {
   overflow: hidden;
-  padding-right: 0px !important;
+  padding-right: 0 !important;
 }
 
 .navbar {
-  background-color: greenyellow !important;
+  background-color: #568203 !important; /* Zmieniłem z oczojebnego greenyellow na czas pracy. (zmiana do cofnięcia)*/
 }
 
 .navbar-toolbar {

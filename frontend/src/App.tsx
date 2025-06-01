@@ -6,6 +6,7 @@ import Navbar from './components/Navbar/Navbar'
 import { mainPagePath, loginPagePath, carAddPagePath, usersPagePath, reservationsPagePath } from './shared/pagesPaths.ts';
 import UsersPage from './pages/UsersPage/UsersPage.tsx';
 import ReservationPage from './pages/ReservationPage/ReservationPage.tsx';
+import AuthPage from "./pages/AuthPage/AuthPage.tsx";
 
 function AppContent() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function AppContent() {
         <Route path={carAddPagePath} element={<CarAddPage />} />
         <Route path={usersPagePath} element={<UsersPage/>} />
         <Route path ={reservationsPagePath} element={<ReservationPage />} />
+        <Route path={loginPagePath} element={<AuthPage />} />
       </Routes>
     </>
   )
