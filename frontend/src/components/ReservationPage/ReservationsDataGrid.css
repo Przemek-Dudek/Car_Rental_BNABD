@@ -1,0 +1,40 @@
+.reservations-data-grid {
+  height: 500px;
+  width: 80%;
+}
+
+.accept-button,
+.cancel-button,
+.extend-button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.accept-button {
+  background-color: #2ecc71;
+}
+
+.accept-button:hover {
+  background-color: #27ae60;
+}
+
+.cancel-button {
+  background-color: #e74c3c;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+.extend-button {
+  background-color: #3498db;
+}
+
+.extend-button:hover {
+  background-color: #2980b9;
+}
