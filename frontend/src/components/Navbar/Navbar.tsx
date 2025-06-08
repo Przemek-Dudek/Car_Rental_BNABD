@@ -22,7 +22,7 @@ import { useTheme } from '@mui/material/styles';
 
 import appIcon from '../../assets/app_icon.png';
 import Badge from '@mui/material/Badge';
-import {mainPagePath, carAddPagePath, usersPagePath, reservationsPagePath, usersRentingsPagePath, changePasswordPagePath} from "../../shared/pagesPaths.ts";
+import {mainPagePath, carAddPagePath, usersPagePath, reservationsPagePath, usersRentingsPagePath, changePasswordPagePath, carEditPagePath} from "../../shared/pagesPaths.ts";
 const Navbar = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -37,7 +37,7 @@ const Navbar = () => {
   const navbarItems = [
     { pathname: mainPagePath, title: "Main Page" },
     { pathname: carAddPagePath, title: "Add Car" }, //admin
-    { pathname: '', title: "Edit Cars" }, // admin
+    { pathname: carEditPagePath, title: "Edit Cars" }, // admin
     { pathname: usersPagePath, title: "Users" }, // admin
     { pathname: reservationsPagePath , title: "Reservations" }, // admin
   ];

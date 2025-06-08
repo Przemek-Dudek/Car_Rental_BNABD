@@ -6,6 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import './CarCard.css';
+import { useNavigate } from 'react-router-dom';
 
 export interface CarData {
   brand: string;
@@ -50,10 +51,9 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         </Typography>
       </CardContent>
       <CardActions className="car-card__actions">
-        <Button size="small">Szczegóły</Button>
-        <Button size="small" disabled={car.status !== 'AVAILABLE'}>
-          Wypożycz
-        </Button>
+          <Button size="small" disabled={car.status !== 'AVAILABLE'}>
+            Wypożycz
+          </Button>
       </CardActions>
     </Card>
   );
