@@ -1,0 +1,35 @@
+.cars-datagrid-container {
+  height: 500px;
+  width: 80%;
+}
+
+.cars-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-button {
+  background-color: blue;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background-color: #3f66c2;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
