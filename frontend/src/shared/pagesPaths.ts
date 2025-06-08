@@ -6,3 +6,4 @@ export const usersPagePath = "/users";
 export const reservationsPagePath = "/reservations";
 export const registerPagePath = "/register";
 export const usersRentingsPagePath = "/users-rentings";
+export const changePasswordPagePath = "/change-password";
