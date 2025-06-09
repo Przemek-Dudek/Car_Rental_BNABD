@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import static com.bnabd.rental.user.Permission.*;
 import static com.bnabd.rental.user.Role.ADMIN;
-import static com.bnabd.rental.user.Role.MANAGER;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -50,11 +49,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // 🔥 Allow Swagger
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name())
+                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name())
+                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name())
+                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name())
+                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
                 )
