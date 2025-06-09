@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarResponse {
-    @JsonProperty("car_id")
+    @JsonProperty("id")
     private Integer id;
     @JsonProperty("brand")
     private String brand;
