@@ -81,6 +81,8 @@ const MainPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
 
+  const isLoggedIn = !!localStorage.getItem('access_token');
+
   const filteredAndSortedCars = useMemo(() => {
     const filtered = carList
       .filter(car =>
@@ -197,7 +199,7 @@ const MainPage: React.FC = () => {
 
       <div className='car-cards-container'>
         {paginatedCars.map((car, index) => (
-          <CarCard key={index} car={car} />
+          <CarCard key={index} car={car} isLoggedIn={isLoggedIn}/>
         ))}
       </div>
 

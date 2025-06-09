@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
@@ -28,6 +28,12 @@ import NotificationsModal from './NotificationsModal.tsx';
 const Navbar = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('access_token'));
+  }, []);
 
   const user = {
     firstName: 'Jan',
@@ -204,6 +210,8 @@ React.useEffect(() => {
             </Box>
           )}
 
+        {isLoggedIn ? (
+          <>
           {isDesktop && (
             <IconButton
               size="large"
@@ -268,6 +276,27 @@ React.useEffect(() => {
               ))}
             </Menu>
           </Box>
+          </>
+          ) : (
+            <Box className="navbar-auth-buttons" sx={{ display: 'flex', gap: 2, ml: 2 }}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                component={Link}
+                to="/login"
+              >
+                Sign In
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/register"
+              >
+                Sign Up
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </Container>
       <NotificationsModal
