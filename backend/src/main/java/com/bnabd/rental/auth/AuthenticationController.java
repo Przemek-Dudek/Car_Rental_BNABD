@@ -39,5 +39,11 @@ public class AuthenticationController {
     service.refreshToken(request, response);
   }
 
+  @PostMapping("/logout")
+  public ResponseEntity<?> logout(HttpServletRequest request) {
+    String accessToken = request.getHeader("Authorization").substring(7); // Extract token from header
+    service.invalidateToken(accessToken); // Invalidate the token on the server side
+    return ResponseEntity.ok().build();
+  }
 
 }

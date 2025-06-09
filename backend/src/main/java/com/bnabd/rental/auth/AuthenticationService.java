@@ -117,4 +117,12 @@ public class AuthenticationService {
             }
         }
     }
+
+    public void invalidateToken(String token) {
+        var storedToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+        storedToken.setExpired(true);
+        storedToken.setRevoked(true);
+        tokenRepository.save(storedToken);
+    }
 }
