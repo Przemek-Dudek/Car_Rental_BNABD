@@ -5,6 +5,7 @@ import {
   DialogTitle, TextField
 } from '@mui/material';
 import './CarCard.css';
+import { useNavigate } from 'react-router-dom';
 
 export interface CarData {
   brand: string;
@@ -27,16 +28,24 @@ const reservations = [
 
 interface CarCardProps {
   car: CarData;
+  isLoggedIn: boolean;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car }) => {
+const CarCard: React.FC<CarCardProps> = ({ car, isLoggedIn }) => {
   const [open, setOpen] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const navigate = useNavigate();
 
   const today = new Date().toISOString().split('T')[0];
 
-  const handleClickOpen = () => setOpen(true);
+  const handleClickOpen = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    setOpen(true);
+  };
   const handleClose = () => {
     setOpen(false);
     setStartDate('');

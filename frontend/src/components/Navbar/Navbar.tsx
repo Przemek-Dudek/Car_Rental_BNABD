@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
@@ -19,6 +19,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { apiRequest } from '../../shared/APIManagement';
 
 import appIcon from '../../assets/app_icon.png';
 import Badge from '@mui/material/Badge';
@@ -27,6 +28,12 @@ import NotificationsModal from './NotificationsModal.tsx';
 const Navbar = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('access_token'));
+  }, []);
 
   const user = {
     firstName: 'Jan',
@@ -61,11 +68,30 @@ const [notifications] = React.useState([
     { pathname: reservationsPagePath , title: "Reservations" }, // admin
   ];
 
+const handleLogout = async () => {
+  const accessToken = localStorage.getItem('access_token');
+  if (accessToken) {
+    try {
+      await apiRequest(
+        'POST',
+        'auth/logout',
+        null,
+        { Authorization: `Bearer ${accessToken}` }
+      );
+    } catch (e) {
+      // Możesz obsłużyć błąd, np. wyświetlić komunikat
+    }
+  }
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  window.location.href = '/login';
+};
+
   const userSettings = [
     { title: 'Main Page', path: mainPagePath },
     { title: 'My Rents', path: usersRentingsPagePath },
     { title: 'Change Password', path: changePasswordPagePath },
-    { title: 'Logout', path: '' }
+    { title: 'Logout', path: '', action: handleLogout },
   ];
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -184,6 +210,8 @@ React.useEffect(() => {
             </Box>
           )}
 
+        {isLoggedIn ? (
+          <>
           {isDesktop && (
             <IconButton
               size="large"
@@ -230,7 +258,7 @@ React.useEffect(() => {
                   onClick={() => {
                     handleCloseUserMenu();
                     if (setting.title === 'Logout') {
-                      //handleLogout();
+                      handleLogout();
                     } 
                     else {
                       window.location.href = setting.path;
@@ -248,6 +276,27 @@ React.useEffect(() => {
               ))}
             </Menu>
           </Box>
+          </>
+          ) : (
+            <Box className="navbar-auth-buttons" sx={{ display: 'flex', gap: 2, ml: 2 }}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                component={Link}
+                to="/login"
+              >
+                Sign In
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/register"
+              >
+                Sign Up
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </Container>
       <NotificationsModal
