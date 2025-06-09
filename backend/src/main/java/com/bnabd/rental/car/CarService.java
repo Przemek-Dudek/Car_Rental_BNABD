@@ -27,6 +27,36 @@ public class CarService {
         return mapToCarResponse(savedCar);
     }
 
+    public CarResponse editCar(CarRequest request) {
+        Car car = carRepository.findById(request.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + request.getId()));
+
+        car.setBrand(request.getBrand());
+        car.setModel(request.getModel());
+        car.setYear(request.getYear());
+        car.setPlateNumber(request.getPlateNumber());
+        car.setPricePerDay(request.getPricePerDay());
+        car.setSegment(request.getSegment());
+
+        Car updatedCar = carRepository.save(car);
+        return mapToCarResponse(updatedCar);
+    }
+
+    public CarResponse getById(Integer carId) {
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + carId));
+
+        return mapToCarResponse(car);
+    }
+
+    public CarResponse deleteCar(CarRequest request) {
+        Car car = carRepository.findById(request.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + request.getId()));
+        carRepository.delete(car);
+
+        return mapToCarResponse(car);
+    }
+
     public List<CarResponse> getAllCars() {
         return carRepository.findAll().stream()
                 .map(this::mapToCarResponse)
