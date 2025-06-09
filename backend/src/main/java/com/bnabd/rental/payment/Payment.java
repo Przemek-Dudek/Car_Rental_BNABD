@@ -20,6 +20,7 @@ public class Payment {
     @GeneratedValue
     private Integer id;
 
+    private Integer payerId;
     private Integer reservationId;
     private String paymentDate;
     private Double paymentAmount;

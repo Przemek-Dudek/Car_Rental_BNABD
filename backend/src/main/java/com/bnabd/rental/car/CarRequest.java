@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarRequest {
+    private Integer id;
     private String brand;
     private String model;
     private int year;
