@@ -23,6 +23,7 @@ import { useTheme } from '@mui/material/styles';
 import appIcon from '../../assets/app_icon.png';
 import Badge from '@mui/material/Badge';
 import {mainPagePath, carAddPagePath, usersPagePath, reservationsPagePath, usersRentingsPagePath, changePasswordPagePath, carEditPagePath} from "../../shared/pagesPaths.ts";
+import NotificationsModal from './NotificationsModal.tsx';
 const Navbar = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -33,6 +34,24 @@ const Navbar = () => {
   };
 
   const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+
+const [notificationsOpen, setNotificationsOpen] = React.useState(false);
+const [notifications] = React.useState([
+  'Twoja rezerwacja została zatwierdzona.',
+  'Samochód XYZ jest już gotowy do odbioru.',
+  'Termin przeglądu pojazdu ABC zbliża się.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+  'Zbliża się koniec wypożyczenia auta 123.',
+]);
 
   const navbarItems = [
     { pathname: mainPagePath, title: "Main Page" },
@@ -170,8 +189,9 @@ React.useEffect(() => {
               size="large"
               color="inherit"
               className="notifications-button"
+              onClick={() => setNotificationsOpen(true)}
             >
-              <Badge badgeContent={12} color="error">
+              <Badge badgeContent={notifications.length} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -230,6 +250,11 @@ React.useEffect(() => {
           </Box>
         </Toolbar>
       </Container>
+      <NotificationsModal
+        open={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+        notifications={notifications}
+      />
     </AppBar>
   );
 };
