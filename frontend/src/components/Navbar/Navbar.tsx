@@ -19,6 +19,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { apiRequest } from '../../shared/APIManagement';
 
 import appIcon from '../../assets/app_icon.png';
 import Badge from '@mui/material/Badge';
@@ -61,11 +62,30 @@ const [notifications] = React.useState([
     { pathname: reservationsPagePath , title: "Reservations" }, // admin
   ];
 
+const handleLogout = async () => {
+  const accessToken = localStorage.getItem('access_token');
+  if (accessToken) {
+    try {
+      await apiRequest(
+        'POST',
+        'auth/logout',
+        null,
+        { Authorization: `Bearer ${accessToken}` }
+      );
+    } catch (e) {
+      // Możesz obsłużyć błąd, np. wyświetlić komunikat
+    }
+  }
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  window.location.href = '/login';
+};
+
   const userSettings = [
     { title: 'Main Page', path: mainPagePath },
     { title: 'My Rents', path: usersRentingsPagePath },
     { title: 'Change Password', path: changePasswordPagePath },
-    { title: 'Logout', path: '' }
+    { title: 'Logout', path: '', action: handleLogout },
   ];
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -230,7 +250,7 @@ React.useEffect(() => {
                   onClick={() => {
                     handleCloseUserMenu();
                     if (setting.title === 'Logout') {
-                      //handleLogout();
+                      handleLogout();
                     } 
                     else {
                       window.location.href = setting.path;
