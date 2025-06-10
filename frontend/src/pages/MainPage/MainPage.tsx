@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import './MainPage.css';
 import CarCard, { type CarData } from '../../components/MainPage/CarCard';
 import {
@@ -6,70 +6,70 @@ import {
   MenuItem,
   Button
 } from '@mui/material';
+import { getAllCars } from '../../shared/carApi';
 
-
-const carList: CarData[] = [
-  {
-    brand: "Hyundai",
-    model: "i30",
-    year: 2019,
-    plate_number: "KR7890MN",
-    price_per_day: 100,
-    status: "AVAILABLE",
-    segment: "C",
-    przeglad_wazny_koniec: "2025-02-20",
-    ubezpieczenie_koniec: "2025-01-10",
-    image: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg"
-  },
-  {
-    brand: "Toyota",
-    model: "Corolla",
-    year: 2020,
-    plate_number: "WA4567BC",
-    price_per_day: 120,
-    status: "RENTED",
-    segment: "C",
-    przeglad_wazny_koniec: "2025-06-15",
-    ubezpieczenie_koniec: "2025-03-01",
-    image: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg"
-  },
-  {
-    brand: "BMW",
-    model: "3 Series",
-    year: 2022,
-    plate_number: "DW1234XY",
-    price_per_day: 250,
-    status: "AVAILABLE",
-    segment: "D",
-    przeglad_wazny_koniec: "2026-01-01",
-    ubezpieczenie_koniec: "2025-12-01",
-    image: "https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg"
-  },
-  {
-    brand: "Kia",
-    model: "Ceed",
-    year: 2018,
-    plate_number: "PO2345GH",
-    price_per_day: 90,
-    status: "INACTIVE",
-    segment: "C",
-    przeglad_wazny_koniec: "2024-11-10",
-    ubezpieczenie_koniec: "2024-10-05",
-    image: "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg"
-  },
-  {
-    brand: "Mercedes",
-    model: "A-Class",
-    year: 2021,
-    plate_number: "LU5678JK",
-    price_per_day: 200,
-    status: "AVAILABLE",
-    segment: "C",
-    przeglad_wazny_koniec: "2025-08-30",
-    ubezpieczenie_koniec: "2025-07-15",
-    image: "https://images.pexels.com/photos/1007417/pexels-photo-1007417.jpeg"
-  }
-];
+// const carList: CarData[] = [
+//   {
+//     brand: "Hyundai",
+//     model: "i30",
+//     year: 2019,
+//     plate_number: "KR7890MN",
+//     price_per_day: 100,
+//     status: "AVAILABLE",
+//     segment: "C",
+//     przeglad_wazny_koniec: "2025-02-20",
+//     ubezpieczenie_koniec: "2025-01-10",
+//     image: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg"
+//   },
+//   {
+//     brand: "Toyota",
+//     model: "Corolla",
+//     year: 2020,
+//     plate_number: "WA4567BC",
+//     price_per_day: 120,
+//     status: "RENTED",
+//     segment: "C",
+//     przeglad_wazny_koniec: "2025-06-15",
+//     ubezpieczenie_koniec: "2025-03-01",
+//     image: "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg"
+//   },
+//   {
+//     brand: "BMW",
+//     model: "3 Series",
+//     year: 2022,
+//     plate_number: "DW1234XY",
+//     price_per_day: 250,
+//     status: "AVAILABLE",
+//     segment: "D",
+//     przeglad_wazny_koniec: "2026-01-01",
+//     ubezpieczenie_koniec: "2025-12-01",
+//     image: "https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg"
+//   },
+//   {
+//     brand: "Kia",
+//     model: "Ceed",
+//     year: 2018,
+//     plate_number: "PO2345GH",
+//     price_per_day: 90,
+//     status: "INACTIVE",
+//     segment: "C",
+//     przeglad_wazny_koniec: "2024-11-10",
+//     ubezpieczenie_koniec: "2024-10-05",
+//     image: "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg"
+//   },
+//   {
+//     brand: "Mercedes",
+//     model: "A-Class",
+//     year: 2021,
+//     plate_number: "LU5678JK",
+//     price_per_day: 200,
+//     status: "AVAILABLE",
+//     segment: "C",
+//     przeglad_wazny_koniec: "2025-08-30",
+//     ubezpieczenie_koniec: "2025-07-15",
+//     image: "https://images.pexels.com/photos/1007417/pexels-photo-1007417.jpeg"
+//   }
+// ];
 
 const ITEMS_PER_PAGE = 6;
 
@@ -80,21 +80,34 @@ const MainPage: React.FC = () => {
   const [yearFilter, setYearFilter] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [cars, setCars] = useState<CarData[]>([]);
+  const [loading, setLoading] = useState(true);
+
 
   const isLoggedIn = !!localStorage.getItem('access_token');
 
+  useEffect(() => {
+  getAllCars()
+    .then(data => {
+      console.log('API response:', data);
+      setCars(data);
+    })
+    .catch(() => setCars([]))
+    .finally(() => setLoading(false));
+}, []);
+
   const filteredAndSortedCars = useMemo(() => {
-    const filtered = carList
+    const filtered = cars
       .filter(car =>
         (`${car.brand} ${car.model}`.toLowerCase().includes(search.toLowerCase()))
       )
       .filter(car => !statusFilter || car.status === statusFilter)
       .filter(car => !segmentFilter || car.segment === segmentFilter)
-      .filter(car => !yearFilter || car.year.toString() === yearFilter)
+      .filter(car => !yearFilter || car.year === yearFilter)
       .sort((a, b) =>
         sortOrder === 'asc'
-          ? a.price_per_day - b.price_per_day
-          : b.price_per_day - a.price_per_day
+          ? Number(a.price_per_day) - Number(b.price_per_day)
+          : Number(b.price_per_day) - Number(a.price_per_day)
       );
 
     return filtered;
@@ -140,8 +153,7 @@ const MainPage: React.FC = () => {
         >
           <MenuItem value="">Wszystkie statusy</MenuItem>
           <MenuItem value="AVAILABLE">Dostępne</MenuItem>
-          <MenuItem value="RENTED">Wypożyczone</MenuItem>
-          <MenuItem value="INACTIVE">Nieaktywne</MenuItem>
+          <MenuItem value="UNAVAILABLE">Nieaktywne</MenuItem>
         </TextField>
 
         <TextField
@@ -169,7 +181,7 @@ const MainPage: React.FC = () => {
           className = "filters-element"
         >
           <MenuItem value="">Wszystkie roczniki</MenuItem>
-          {Array.from(new Set(carList.map(car => car.year))).map(year => (
+          {Array.from(new Set(cars.map(car => car.year))).map(year => (
             <MenuItem key={year} value={year.toString()}>{year}</MenuItem>
           ))}
         </TextField>
@@ -198,8 +210,8 @@ const MainPage: React.FC = () => {
       </div>
 
       <div className='car-cards-container'>
-        {paginatedCars.map((car, index) => (
-          <CarCard key={index} car={car} isLoggedIn={isLoggedIn}/>
+        {paginatedCars.map((car) => (
+          <CarCard key={car.id} car={car} isLoggedIn={isLoggedIn}/>
         ))}
       </div>
 

@@ -12,19 +12,21 @@ import {
   TextField,
   MenuItem
 } from '@mui/material';
+import { addCar } from '../../shared/carApi';
 
 const steps = ['Marka i model', 'Numer rejestracyjny i rocznik', 'Cena, status i segment', 'Daty przeglądu i ubezpieczenia'];
 
-interface CarDto {
+export interface CarDto {
   brand: string;
   model: string;
   year: string;
-  plate_number: string;
-  price_per_day: string;
-  status: 'AVAILABLE' | 'RENTED' | 'INACTIVE';
-  segment: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'J' | 'M' | 'S';
-  przeglad_end: string;
-  ubezpieczenie_end: string;
+  plateNumber: string;
+  pricePerDay: string;
+  status: string;
+  segment: string;
+  imageLink: string;
+  endOfInspectionDate: string;
+  endOfInsuranceDate: string;
 }
 
 const CarAddForm: React.FC = () => {
@@ -33,12 +35,13 @@ const CarAddForm: React.FC = () => {
     brand: '',
     model: '',
     year: '',
-    plate_number: '',
-    price_per_day: '',
+    plateNumber: '',
+    pricePerDay: '',
     status: 'AVAILABLE',
     segment: 'A',
-    przeglad_end: '',
-    ubezpieczenie_end: '',
+    imageLink: '',
+    endOfInspectionDate: '',
+    endOfInsuranceDate: '',
   });
 
   const [finished, setFinished] = React.useState(false);
@@ -54,19 +57,30 @@ const CarAddForm: React.FC = () => {
       brand: '',
       model: '',
       year: '',
-      plate_number: '',
-      price_per_day: '',
+      plateNumber: '',
+      pricePerDay: '',
       status: 'AVAILABLE',
       segment: 'A',
-      przeglad_end: '',
-      ubezpieczenie_end: '',
+      imageLink: '',
+      endOfInspectionDate: '',
+      endOfInsuranceDate: '',
     });
   };
 
   const handleSubmit = async () => {
     setFinished(true);
     setErrorMessage(null);
-    //dodac tu kiedys sprawdzanie czy taka rejestracja juz istnieje
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      setErrorMessage('Brak uprawnień. Zaloguj się jako administrator.');
+      return;
+    }
+    try {
+      await addCar(carData, accessToken!);
+      setFinished(true);
+    } catch (e) {
+      setErrorMessage('Błąd podczas dodawania auta.');
+    }
   };
 
   return (
@@ -91,17 +105,25 @@ const CarAddForm: React.FC = () => {
                 onChange={(e) => setCarData((prev) => ({ ...prev, model: e.target.value }))}
                 className="step-input"
               />
-            <TextField
+              <TextField
                 select
                 label="Segment"
                 fullWidth
                 value={carData.segment}
                 onChange={(e) => setCarData((prev) => ({ ...prev, segment: e.target.value as CarDto['segment'] }))}
+                className="step-input"
               >
                 {['A', 'B', 'C', 'D', 'E', 'F', 'J', 'M', 'S'].map(seg => (
                   <MenuItem key={seg} value={seg}>{seg}</MenuItem>
                 ))}
               </TextField>
+              <TextField
+                label="Link do zdjęcia"
+                fullWidth
+                value={carData.imageLink}
+                onChange={(e) => setCarData((prev) => ({ ...prev, imageLink: e.target.value }))}
+                className="step-input"
+              />
               <div className="step-buttons">
                 <Button onClick={handleNext} variant="contained" disabled={!carData.brand || !carData.model}>
                   Dalej
@@ -115,8 +137,8 @@ const CarAddForm: React.FC = () => {
               <TextField
                 label="Numer rejestracyjny"
                 fullWidth
-                value={carData.plate_number}
-                onChange={(e) => setCarData((prev) => ({ ...prev, plate_number: e.target.value }))}
+                value={carData.plateNumber}
+                onChange={(e) => setCarData((prev) => ({ ...prev, plateNumber: e.target.value }))}
                 className="step-input"
               />
               <TextField
@@ -129,7 +151,7 @@ const CarAddForm: React.FC = () => {
               />
               <div className="step-buttons">
                 <Button onClick={handleBack}>Wstecz</Button>
-                <Button onClick={handleNext} variant="contained" disabled={!carData.plate_number || !carData.year}>
+                <Button onClick={handleNext} variant="contained" disabled={!carData.plateNumber || !carData.year}>
                   Dalej
                 </Button>
               </div>
@@ -142,8 +164,8 @@ const CarAddForm: React.FC = () => {
                 label="Cena za dzień (PLN)"
                 type="number"
                 fullWidth
-                value={carData.price_per_day}
-                onChange={(e) => setCarData((prev) => ({ ...prev, price_per_day: e.target.value }))}
+                value={carData.pricePerDay}
+                onChange={(e) => setCarData((prev) => ({ ...prev, pricePerDay: e.target.value }))}
                 className="step-input"
               />
               <TextField
@@ -154,12 +176,11 @@ const CarAddForm: React.FC = () => {
                 onChange={(e) => setCarData((prev) => ({ ...prev, status: e.target.value as CarDto['status'] }))}
               >
                 <MenuItem value="AVAILABLE">Dostępny</MenuItem>
-                <MenuItem value="RENTED">Wynajęty</MenuItem>
-                <MenuItem value="INACTIVE">Nieaktywny</MenuItem>
+                <MenuItem value="UNAVAILABLE">Nieaktywny</MenuItem>
               </TextField>
               <div className="step-buttons">
                 <Button onClick={handleBack}>Wstecz</Button>
-                <Button onClick={handleNext} variant="contained" disabled={!carData.price_per_day}>
+                <Button onClick={handleNext} variant="contained" disabled={!carData.pricePerDay}>
                   Dalej
                 </Button>
               </div>
@@ -173,8 +194,8 @@ const CarAddForm: React.FC = () => {
                 type="date"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
-                value={carData.przeglad_end}
-                onChange={(e) => setCarData((prev) => ({ ...prev, przeglad_end: e.target.value }))}
+                value={carData.endOfInspectionDate}
+                onChange={(e) => setCarData((prev) => ({ ...prev, endOfInspectionDate: e.target.value }))}
                 className="step-input"
               />
               <TextField
@@ -182,15 +203,15 @@ const CarAddForm: React.FC = () => {
                 type="date"
                 fullWidth
                 InputLabelProps={{ shrink: true }}
-                value={carData.ubezpieczenie_end}
-                onChange={(e) => setCarData((prev) => ({ ...prev, ubezpieczenie_end: e.target.value }))}
+                value={carData.endOfInsuranceDate}
+                onChange={(e) => setCarData((prev) => ({ ...prev, endOfInsuranceDate: e.target.value }))}
                 className="step-input"
               />
               <div className="step-buttons">
                 <Button onClick={handleBack}>Wstecz</Button>
                 <Button 
                     onClick={handleSubmit} 
-                    variant="contained" disabled={!carData.przeglad_end || !carData.ubezpieczenie_end}>
+                    variant="contained" disabled={!carData.endOfInspectionDate || !carData.endOfInsuranceDate}>
                   Zakończ
                 </Button>
               </div>

@@ -34,7 +34,8 @@ public class SecurityConfiguration {
             "/v2/api-docs",
             "/v3/api-docs",
             "/swagger-resources",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/api/rental/cars/all"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -73,7 +74,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Allow frontend
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true); // Allow cookies or authentication headers
 
