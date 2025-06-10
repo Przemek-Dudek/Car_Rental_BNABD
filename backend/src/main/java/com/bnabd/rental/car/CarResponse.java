@@ -27,4 +27,10 @@ public class CarResponse {
     private String status;
     @JsonProperty("segment")
     private String segment;
+    @JsonProperty("image_link")
+    private String imageLink;
+    @JsonProperty("end_of_inspection_date")
+    private String endOfInspectionDate; // New field
+    @JsonProperty("end_of_insurance_date")
+    private String endOfInsuranceDate;  // New field
 }

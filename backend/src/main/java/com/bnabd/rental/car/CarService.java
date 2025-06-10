@@ -20,6 +20,9 @@ public class CarService {
                 .pricePerDay(request.getPricePerDay())
                 .status(CarStatus.AVAILABLE)
                 .segment(request.getSegment())
+                .imageLink(request.getImageLink())
+                .endOfInspectionDate(request.getEndOfInspectionDate()) // New field
+                .endOfInsuranceDate(request.getEndOfInsuranceDate())   // New field
                 .build();
 
         Car savedCar = carRepository.save(car);
@@ -37,6 +40,9 @@ public class CarService {
         car.setPlateNumber(request.getPlateNumber());
         car.setPricePerDay(request.getPricePerDay());
         car.setSegment(request.getSegment());
+        car.setImageLink(request.getImageLink()); // Handle new field
+        car.setEndOfInspectionDate(request.getEndOfInspectionDate()); // New field
+        car.setEndOfInsuranceDate(request.getEndOfInsuranceDate());   // New field
 
         Car updatedCar = carRepository.save(car);
         return mapToCarResponse(updatedCar);
@@ -73,6 +79,9 @@ public class CarService {
                 .pricePerDay(String.valueOf(car.getPricePerDay()))
                 .status(car.getStatus().name())
                 .segment(car.getSegment().name())
+                .imageLink(car.getImageLink())
+                .endOfInspectionDate(car.getEndOfInspectionDate()) // New field
+                .endOfInsuranceDate(car.getEndOfInsuranceDate())   // New field
                 .build();
     }
 }

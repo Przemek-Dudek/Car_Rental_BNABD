@@ -8,16 +8,17 @@ import './CarCard.css';
 import { useNavigate } from 'react-router-dom';
 
 export interface CarData {
+  id: number;
   brand: string;
   model: string;
-  year: number;
+  year: string;
   plate_number: string;
-  price_per_day: number;
-  status: 'AVAILABLE' | 'RENTED' | 'INACTIVE';
+  price_per_day: string;
+  status: string;
   segment: string;
-  przeglad_wazny_koniec: string;
-  ubezpieczenie_koniec: string;
-  image: string;
+  image_link: string;
+  end_of_inspection_date: string;
+  end_of_insurance_date: string;
 }
 
 // Przykładowe rezerwacje
@@ -78,12 +79,12 @@ const CarCard: React.FC<CarCardProps> = ({ car, isLoggedIn }) => {
     const d1 = new Date(start);
     const d2 = new Date(end);
     const diffDays = Math.ceil((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24)) + 1;
-    return diffDays * car.price_per_day;
+    return diffDays * Number(car.price_per_day);
   };
 
   return (
     <Card className="car-card">
-      <CardMedia className="car-card__media" image={car.image} title={`${car.brand} ${car.model}`} />
+      <CardMedia className="car-card__media" image={car.image_link} title={`${car.brand} ${car.model}`} />
       <CardContent className="car-card__content">
         <Typography variant="h6" component="div">
           {car.brand} {car.model} ({car.year})
@@ -92,8 +93,8 @@ const CarCard: React.FC<CarCardProps> = ({ car, isLoggedIn }) => {
           {car.segment} • {car.status === 'AVAILABLE' ? 'Dostępny' : car.status === 'RENTED' ? 'Wynajęty' : 'Nieaktywny'} • {car.plate_number}
         </Typography>
         <Typography variant="body2">Cena: <strong>{car.price_per_day} PLN/dzień</strong></Typography>
-        <Typography variant="body2">Przegląd do: {car.przeglad_wazny_koniec}</Typography>
-        <Typography variant="body2">Ubezpieczenie do: {car.ubezpieczenie_koniec}</Typography>
+        <Typography variant="body2">Przegląd do: {car.end_of_inspection_date}</Typography>
+        <Typography variant="body2">Ubezpieczenie do: {car.end_of_insurance_date}</Typography>
       </CardContent>
       <CardActions>
         <Button size="small" disabled={car.status !== 'AVAILABLE'} onClick={handleClickOpen}>Wypożycz</Button>

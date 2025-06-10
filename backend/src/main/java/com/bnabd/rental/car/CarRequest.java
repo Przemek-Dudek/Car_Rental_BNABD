@@ -18,4 +18,7 @@ public class CarRequest {
     private Double pricePerDay;
     private CarStatus status;
     private CarSegment segment;
+    private String imageLink;
+    private String endOfInspectionDate; // New field
+    private String endOfInsuranceDate;  // New field
 }
