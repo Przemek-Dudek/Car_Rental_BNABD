@@ -12,6 +12,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CasinoIcon from '@mui/icons-material/Casino';
 import PasswordStrength from './PasswordStrength.tsx';
 import './PasswordChangeForm.css';
+import { changePassword } from '../../shared/userApi';
 
 type Props = {
   setUserData?: (data: { passwordChanged: boolean }) => void;
@@ -25,6 +26,8 @@ const PasswordChangeForm: React.FC<Props> = () => {
   const [passwordStrength, setPasswordStrength] = useState<'Weak' | 'Medium' | 'Strong'>('Weak');
   const [success, setSuccess] = useState(false);
   const [passwordMatchError, setPasswordMatchError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
 
   // Prosta ocena siły hasła (możesz zmienić później)
   const evaluatePasswordStrength = (password: string) => {
@@ -81,17 +84,48 @@ const PasswordChangeForm: React.FC<Props> = () => {
     setPasswordMatchError(false);
   };
 
-  // Usunięto logikę backendową, tylko symulacja sukcesu
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(false);
+
     if (newPassword !== confirmPassword) {
       setPasswordMatchError(true);
+      setError('Nowe hasło musi się zgadzać w obu miejscach');
       return;
     }
-    setSuccess(true);
-    setPasswordMatchError(false);
-    // Backend i logika biznesowa zostaną dodane w przyszłości
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError('Wszystkie pola są wymagane.');
+      return;
+    }
+
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      setError('Brak uprawnień. Zaloguj się ponownie.');
+      return;
+    }
+
+    try {
+      await changePassword(
+        {
+          currentPassword,
+          newPassword,
+          confirmationPassword: confirmPassword,
+        },
+        accessToken
+      );
+      setSuccess(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+        'Błąd podczas zmiany hasła. Sprawdź poprawność danych.'
+      );
+    }
   };
+
 
   return (
     <div className="container">
@@ -164,7 +198,7 @@ const PasswordChangeForm: React.FC<Props> = () => {
         {success && (
           <Paper elevation={0} className="form-success">
             <Typography variant="body1" color="success.main">
-              Hasło zostało zmienione (symulacja frontu).
+              Hasło zostało zmienione!
             </Typography>
           </Paper>
         )}
