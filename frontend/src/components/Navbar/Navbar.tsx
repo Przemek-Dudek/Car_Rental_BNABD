@@ -98,6 +98,9 @@ const handleLogout = async () => {
   }
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+  localStorage.removeItem('user_first_name');
+  localStorage.removeItem('user_last_name');
+  localStorage.removeItem('user_role');
   window.location.href = '/login';
 };
 

@@ -1,57 +1,58 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import './UsersDataGrid.css';
+import { getAllUsers, deleteUser } from '../../shared/userApi';
 
 export interface UserData {
   id: number;
-  name: string;
-  surname: string;
+  firstname: string;
+  lastname: string;
   email: string;
-  role: 'ADMIN' | 'CLIENT' | 'NOT_LOGGED_IN';
-  created_at: string;
+  role: string;
 }
 
-const initialUsers: UserData[] = [
-  {
-    id: 1,
-    name: 'Jan',
-    surname: 'Kowalski',
-    email: 'jan.kowalski@example.com',
-    role: 'ADMIN',
-    created_at: '2023-10-01T12:00:00Z'
-  },
-  {
-    id: 2,
-    name: 'Anna',
-    surname: 'Nowak',
-    email: 'anna.nowak@example.com',
-    role: 'CLIENT',
-    created_at: '2024-02-14T09:30:00Z'
-  },
-  {
-    id: 3,
-    name: 'Piotr',
-    surname: 'Zieliński',
-    email: 'piotr.zielinski@example.com',
-    role: 'CLIENT',
-    created_at: '2024-06-05T18:45:00Z',
-  },
-];
-
 const UsersDataGrid: React.FC = () => {
-  const [rows, setRows] = React.useState<UserData[]>(initialUsers);
+  const [rows, setRows] = useState<UserData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleDelete = (id: number) => {
-    setRows(prev => prev.filter(user => user.id !== id));
+  const fetchUsers = async () => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      setError('Brak uprawnień. Zaloguj się ponownie.');
+      return;
+    }
+    try {
+      const users = await getAllUsers(accessToken);
+      setRows(users);
+    } catch (e: any) {
+      setError(e?.response?.data?.error || 'Błąd pobierania użytkowników.');
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Czy na pewno chcesz usunąć tego użytkownika?')) return;
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      setError('Brak uprawnień. Zaloguj się ponownie.');
+      return;
+    }
+    try {
+      await deleteUser(id, accessToken);
+      fetchUsers(); // odśwież listę po usunięciu
+    } catch (e: any) {
+      setError(e?.response?.data?.error || 'Błąd podczas usuwania użytkownika.');
+    }
   };
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 130 },
-    { field: 'surname', headerName: 'Last Name', width: 130 },
+    { field: 'firstname', headerName: 'Imię', width: 130 },
+    { field: 'lastname', headerName: 'Nazwisko', width: 130 },
     { field: 'email', headerName: 'Email', width: 200 },
-    { field: 'role', headerName: 'Rola', width: 150 },
-    { field: 'created_at', headerName: 'Utworzono', width: 200 },
+    { field: 'role', headerName: 'Rola', width: 100 },
     {
       field: 'actions',
       headerName: 'Akcje',
@@ -59,22 +60,26 @@ const UsersDataGrid: React.FC = () => {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
+        params.row.role !== 'ADMIN' ? (
         <button
           onClick={() => handleDelete(params.row.id)}
           className="delete-button"
         >
           Usuń
         </button>
-      )
-    }
+      ) : null
+    ),
+    },
   ];
 
   return (
     <div className="users-data-grid">
+      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
       <DataGrid
         rows={rows}
         columns={columns}
-        checkboxSelection
+        getRowId={(row) => row.id}
+        disableRowSelectionOnClick
         showToolbar
       />
     </div>
