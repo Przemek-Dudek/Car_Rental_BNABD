@@ -5,7 +5,8 @@
 
 .accept-button,
 .cancel-button,
-.extend-button {
+.extend-button,
+.note-button {
   margin-right: 5px;
   padding: 5px 10px;
   border: none;
@@ -31,10 +32,12 @@
   background-color: #c0392b;
 }
 
-.extend-button {
+.extend-button,
+.note-button {
   background-color: #3498db;
 }
 
-.extend-button:hover {
+.extend-button:hover,
+.note-button:hover {
   background-color: #2980b9;
 }

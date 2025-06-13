@@ -10,11 +10,18 @@ import {
   Paper,
   Typography,
   TextField,
-  MenuItem
+  MenuItem,
+  Autocomplete
 } from '@mui/material';
 import { addCar } from '../../shared/carApi';
 
 const steps = ['Marka i model', 'Numer rejestracyjny i rocznik', 'Cena, status i segment', 'Daty przeglądu i ubezpieczenia'];
+
+const carBrands = [
+  'Toyota', 'Volkswagen', 'Ford', 'BMW', 'Mercedes-Benz',
+  'Audi', 'Hyundai', 'Kia', 'Renault', 'Peugeot',
+  'Fiat', 'Opel', 'Skoda', 'Mazda', 'Honda'
+];
 
 export interface CarDto {
   brand: string;
@@ -91,12 +98,21 @@ const CarAddForm: React.FC = () => {
           <Step>
             <StepLabel>Marka i model</StepLabel>
             <StepContent>
-              <TextField
-                label="Marka"
-                fullWidth
+              <Autocomplete
+                options={carBrands}
                 value={carData.brand}
-                onChange={(e) => setCarData((prev) => ({ ...prev, brand: e.target.value }))}
-                className="step-input"
+                onChange={(_, newValue) =>
+                  setCarData((prev) => ({ ...prev, brand: newValue || '' }))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Marka"
+                    className="step-input"
+                    fullWidth
+                    required
+                  />
+                )}
               />
               <TextField
                 label="Model"

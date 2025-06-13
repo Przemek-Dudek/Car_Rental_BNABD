@@ -1,6 +1,8 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import './UsersRentingsGrid.css';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
+
 
 export interface UserRenting {
   id: number;
@@ -56,6 +58,9 @@ const mockRentings: UserRenting[] = [
 
 const UsersRentingsGrid: React.FC = () => {
   const [rows, setRows] = React.useState<UserRenting[]>(mockRentings);
+  const [rateDialogOpen, setRateDialogOpen] = useState(false);
+  const [rateValue, setRateValue] = useState<number | string>('');
+  const [selectedRentingId, setSelectedRentingId] = useState<number | null>(null);
 
   const updateStatus = (id: number, newStatus: UserRenting['status']) => {
     setRows((prev) =>
@@ -111,6 +116,19 @@ const UsersRentingsGrid: React.FC = () => {
             );
           case 'PENDING_RENEWED':
             return <span>Oczekuje na zatwierdzenie przedłużenia</span>;
+          case 'COMPLETED':
+          return (
+            <button
+              className="rate-button"
+              onClick={() => {
+                setSelectedRentingId(id);
+                setRateValue('');
+                setRateDialogOpen(true);
+              }}
+            >
+              Oceń
+            </button>
+          );
           default:
             return null;
         }
@@ -126,6 +144,28 @@ const UsersRentingsGrid: React.FC = () => {
         disableRowSelectionOnClick
         checkboxSelection
       />
+      {/* Dialog dla oceny */}
+      <Dialog open={rateDialogOpen} onClose={() => setRateDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Oceń rezerwację</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            label="Ocena"
+            value={rateValue}
+            onChange={e => setRateValue(e.target.value)}
+            fullWidth
+            margin="normal"
+          >
+            {[0, 1, 2, 3, 4, 5].map(val => (
+              <MenuItem key={val} value={val}>{val}</MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRateDialogOpen(false)} variant="outlined">Wróć</Button>
+          <Button onClick={() => setRateDialogOpen(false)} variant="contained">Zapisz</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -33,6 +33,9 @@ const LoginForm: React.FC = () => {
 
             localStorage.setItem("access_token", data.access_token);
             localStorage.setItem("refresh_token", data.refresh_token);
+            localStorage.setItem("user_first_name", data.first_name);
+            localStorage.setItem("user_last_name", data.last_name);
+            localStorage.setItem("user_role", data.role);
 
             window.location.href = "/home";
         } catch (error) {

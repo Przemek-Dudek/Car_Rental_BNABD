@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import './ReservationsDataGrid.css'; // możesz zmienić nazwę pliku CSS
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
 export interface ReservationData {
   id: number;
@@ -45,6 +46,11 @@ const initialReservations: ReservationData[] = [
 const ReservationDataGrid: React.FC = () => {
   const [rows, setRows] = React.useState<ReservationData[]>(initialReservations);
 
+  const [noteDialogOpen, setNoteDialogOpen] = useState(false);
+  const [noteValue, setNoteValue] = useState('');
+  const [selectedReservationId, setSelectedReservationId] = useState<number | null>(null);
+
+
   const updateStatus = (id: number, newStatus: ReservationData['status']) => {
     setRows(prev =>
       prev.map(reservation =>
@@ -85,6 +91,19 @@ const ReservationDataGrid: React.FC = () => {
                 <button onClick={() => alert('Przedłużenie niezaimplementowane')} className="extend-button">Przedłuż</button>
               </div>
             );
+          case 'COMPLETED':
+          return (
+            <button
+              className="note-button"
+              onClick={() => {
+                setSelectedReservationId(id);
+                setNoteValue('');
+                setNoteDialogOpen(true);
+              }}
+            >
+              Dodaj notatkę
+            </button>
+          );
           default:
             return null;
         }
@@ -100,6 +119,26 @@ const ReservationDataGrid: React.FC = () => {
         checkboxSelection
         showToolbar
       />
+      {/* Dialog dla notatki */}
+      <Dialog open={noteDialogOpen} onClose={() => setNoteDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Dodaj notatkę do rezerwacji</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Notatka"
+            value={noteValue}
+            onChange={e => setNoteValue(e.target.value.slice(0, 150))}
+            fullWidth
+            multiline
+            inputProps={{ maxLength: 150 }}
+            helperText={`${noteValue.length}/150`}
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNoteDialogOpen(false)} variant="outlined">Wróć</Button>
+          <Button onClick={() => setNoteDialogOpen(false)} variant="contained">Zapisz</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
