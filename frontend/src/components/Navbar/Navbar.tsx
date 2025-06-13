@@ -35,12 +35,22 @@ const Navbar = () => {
     setIsLoggedIn(!!localStorage.getItem('access_token'));
   }, []);
 
-  const user = {
-    firstName: 'Jan',
-    lastName: 'Kowalski',
-  };
+  const [user, setUser] = useState<{ firstName: string; lastName: string; role: string }>({
+    firstName: '',
+    lastName: '',
+    role: '',
+  });
 
-  const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('access_token'));
+    setUser({
+      firstName: localStorage.getItem('user_first_name') || '',
+      lastName: localStorage.getItem('user_last_name') || '',
+      role: localStorage.getItem('user_role') || '',
+    });
+  }, []);
+
+const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
 
 const [notificationsOpen, setNotificationsOpen] = React.useState(false);
 const [notifications] = React.useState([
@@ -62,10 +72,14 @@ const [notifications] = React.useState([
 
   const navbarItems = [
     { pathname: mainPagePath, title: "Main Page" },
-    { pathname: carAddPagePath, title: "Add Car" }, //admin
-    { pathname: carEditPagePath, title: "Edit Cars" }, // admin
-    { pathname: usersPagePath, title: "Users" }, // admin
-    { pathname: reservationsPagePath , title: "Reservations" }, // admin
+    ...(user.role === "ADMIN"
+      ? [
+          { pathname: carAddPagePath, title: "Add Car" },
+          { pathname: carEditPagePath, title: "Edit Cars" },
+          { pathname: usersPagePath, title: "Users" },
+          { pathname: reservationsPagePath, title: "Reservations" },
+        ]
+      : []),
   ];
 
 const handleLogout = async () => {

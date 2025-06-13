@@ -111,7 +111,7 @@ const MainPage: React.FC = () => {
       );
 
     return filtered;
-  }, [search, statusFilter, segmentFilter, yearFilter, sortOrder]);
+  }, [cars, search, statusFilter, segmentFilter, yearFilter, sortOrder]);
 
   const totalPages = Math.ceil(filteredAndSortedCars.length / ITEMS_PER_PAGE);
   const paginatedCars = filteredAndSortedCars.slice(
