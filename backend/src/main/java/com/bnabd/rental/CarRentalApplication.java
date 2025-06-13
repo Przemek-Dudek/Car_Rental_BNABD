@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import static com.bnabd.rental.user.Role.ADMIN;
+import static com.bnabd.rental.user.Role.USER;
+
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
@@ -31,6 +33,15 @@ public class CarRentalApplication {
                     .role(ADMIN)
                     .build();
             System.out.println("Admin token: " + service.register(admin).getAccessToken());
+
+            var user = RegisterRequest.builder()
+                    .firstname("User")
+                    .lastname("User")
+                    .email("user@mail.com")
+                    .password("password")
+                    .role(USER)
+                    .build();
+            System.out.println("User token: " + service.register(user).getAccessToken());
         };
     }
 }

@@ -50,6 +50,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // 🔥 Allow Swagger
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
+                                .requestMatchers(PATCH, "/api/v1/users").hasAnyRole("USER", "ADMIN") // Pozwól USER i ADMIN
+                                .requestMatchers(GET, "/api/v1/users").hasRole("ADMIN") // Tylko ADMIN może pobierać użytkowników
+                                .requestMatchers(DELETE, "/api/v1/users/**").hasRole("ADMIN") // Tylko ADMIN może usuwać użytkowników
                                 .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name())
                                 .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name())
@@ -74,7 +77,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Allow frontend
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true); // Allow cookies or authentication headers
 
