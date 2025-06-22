@@ -17,8 +17,6 @@ public class CarResponse {
 
     @JsonProperty("id")
     private Integer id;
-    @JsonProperty("modelId")
-    private String modelId;
     @JsonProperty("year")
     private String year;
     @JsonProperty("plate_number")
