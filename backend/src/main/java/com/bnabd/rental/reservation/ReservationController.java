@@ -37,8 +37,8 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getByCustomerId(customerId));
     }
 
-    @GetMapping("/car/{carId}")
-    public ResponseEntity<List<ReservationResponse>> getReservationsByCarId(@PathVariable Integer carId) {
-        return ResponseEntity.ok(reservationService.getByCarId(carId));
+    @GetMapping("/model/{modelId}")
+    public ResponseEntity<List<ReservationResponse>> getReservationsByModelId(@PathVariable Integer modelId) {
+        return ResponseEntity.ok(reservationService.getByModelId(modelId));
     }
 }

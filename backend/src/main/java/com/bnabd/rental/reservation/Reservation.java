@@ -20,19 +20,13 @@ public class Reservation {
     @GeneratedValue
     private Integer id;
 
-    private Integer customerId;
-    private Integer carId;
+    private Integer userId;
+    private Integer modelId;
 
     private String startDate;
     private String endDate;
+    private Double totalDistanceCovered;
 
     private Double totalPrice;
     private ReservationStatus status;
-}
-
-enum ReservationStatus {
-    PENDING,
-    CONFIRMED,
-    CANCELLED,
-    COMPLETED
 }

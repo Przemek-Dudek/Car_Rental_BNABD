@@ -15,8 +15,8 @@ public class ReservationResponse {
     private Integer id;
     @JsonProperty("customer_id")
     private Integer customerId;
-    @JsonProperty("car_id")
-    private Integer carId;
+    @JsonProperty("model_id")
+    private Integer modelId;
     @JsonProperty("start_date")
     private String startDate;
     @JsonProperty("end_date")

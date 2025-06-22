@@ -43,10 +43,4 @@ public class AdminController {
     public String delete() {
         return "DELETE:: admin controller";
     }
-
-    @PostMapping("/cars")
-    @PreAuthorize("hasAuthority('admin:create')")
-    public ResponseEntity<CarResponse> addCar(@RequestBody CarRequest request) {
-        return ResponseEntity.ok(carService.addCar(request));
-    }
 }

@@ -2,6 +2,7 @@ package com.bnabd.rental.car;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,16 +14,29 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping
-    public ResponseEntity<CarResponse> addCar(@RequestBody CarRequest car) {
-        return ResponseEntity.ok(carService.addCar(car));
+    @PreAuthorize("hasAuthority('admin:create')")
+    public ResponseEntity<CarResponse> addCar(@RequestBody CarRequest carRequest) {
+        try {
+            CarResponse addedCar = carService.addCar(carRequest);
+            return ResponseEntity.ok(addedCar);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new CarResponse(e.getMessage()));
+        }
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('admin:create')")
     public ResponseEntity<CarResponse> updateCar(@RequestBody CarRequest carRequest) {
-        return ResponseEntity.ok(carService.editCar(carRequest));
+        try {
+            CarResponse addedCar = carService.editCar(carRequest);
+            return ResponseEntity.ok(addedCar);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new CarResponse(e.getMessage()));
+        }
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAuthority('admin:create')")
     public ResponseEntity<CarResponse> deleteCar(@RequestBody CarRequest carRequest) {
         return ResponseEntity.ok(carService.deleteCar(carRequest));
     }

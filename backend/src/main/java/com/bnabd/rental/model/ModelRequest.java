@@ -1,4 +1,4 @@
-package com.bnabd.rental.reservation;
+package com.bnabd.rental.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservationRequest {
-    private Integer id;
-    private Integer customerId;
+public class ModelRequest {
     private Integer modelId;
     private String startDate;
     private String endDate;
-    private Double totalPrice;
-    private ReservationStatus status;
 }

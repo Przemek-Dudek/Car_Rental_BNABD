@@ -13,8 +13,8 @@ public class ReservationService {
 
     public ReservationResponse addReservation(ReservationRequest request) {
         Reservation reservation = Reservation.builder()
-                .carId(request.getCarId())
-                .customerId(request.getCustomerId())
+                .modelId(request.getModelId())
+                .userId(request.getCustomerId())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .totalPrice(request.getTotalPrice())
@@ -29,8 +29,8 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found with id: " + request.getId()));
 
-        reservation.setCarId(request.getCarId());
-        reservation.setCustomerId(request.getCustomerId());
+        reservation.setModelId(request.getModelId());
+        reservation.setUserId(request.getCustomerId());
         reservation.setStartDate(request.getStartDate());
         reservation.setEndDate(request.getEndDate());
         reservation.setTotalPrice(request.getTotalPrice());
@@ -56,14 +56,14 @@ public class ReservationService {
     }
 
     public List<ReservationResponse> getByCustomerId(Integer customerId) {
-        List<Reservation> reservations = reservationRepository.findByCustomerId(customerId);
+        List<Reservation> reservations = reservationRepository.findByUserId(customerId);
         return reservations.stream()
                 .map(this::mapToReservationResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<ReservationResponse> getByCarId(Integer carId) {
-        List<Reservation> reservations = reservationRepository.findByCarId(carId);
+    public List<ReservationResponse> getByModelId(Integer modelId) {
+        List<Reservation> reservations = reservationRepository.findByModelId(modelId);
         return reservations.stream()
                 .map(this::mapToReservationResponse)
                 .collect(Collectors.toList());
@@ -72,8 +72,8 @@ public class ReservationService {
     private ReservationResponse mapToReservationResponse(Reservation reservation) {
         return ReservationResponse.builder()
                 .id(reservation.getId())
-                .carId(reservation.getCarId())
-                .customerId(reservation.getCustomerId())
+                .modelId(reservation.getModelId())
+                .customerId(reservation.getUserId())
                 .startDate(reservation.getStartDate())
                 .endDate(reservation.getEndDate())
                 .totalPrice(reservation.getTotalPrice())

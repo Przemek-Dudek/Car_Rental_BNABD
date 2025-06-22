@@ -1,8 +1,11 @@
 package com.bnabd.rental.car;
 
+import com.bnabd.rental.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,22 +14,20 @@ import java.util.stream.Collectors;
 public class CarService {
     private final CarRepository carRepository;
 
-    public CarResponse addCar(CarRequest request) {
+    public CarResponse addCar(CarRequest request) throws Exception {
         Car car = Car.builder()
-                .brand(request.getBrand())
-                .model(request.getModel())
                 .year(request.getYear())
                 .plateNumber(request.getPlateNumber())
-                .pricePerDay(request.getPricePerDay())
                 .status(CarStatus.AVAILABLE)
-                .segment(request.getSegment())
-                .imageLink(request.getImageLink())
-                .endOfInspectionDate(request.getEndOfInspectionDate()) // New field
-                .endOfInsuranceDate(request.getEndOfInsuranceDate())   // New field
+                .endOfInspectionDate(request.getEndOfInspectionDate())
+                .endOfInsuranceDate(request.getEndOfInsuranceDate())
                 .build();
 
-        Car savedCar = carRepository.save(car);
+        if (!validateCar(car)) {
+            throw new Exception("Car validation failed");
+        }
 
+        Car savedCar = carRepository.save(car);
         return mapToCarResponse(savedCar);
     }
 
@@ -34,15 +35,10 @@ public class CarService {
         Car car = carRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + request.getId()));
 
-        car.setBrand(request.getBrand());
-        car.setModel(request.getModel());
         car.setYear(request.getYear());
         car.setPlateNumber(request.getPlateNumber());
-        car.setPricePerDay(request.getPricePerDay());
-        car.setSegment(request.getSegment());
-        car.setImageLink(request.getImageLink()); // Handle new field
-        car.setEndOfInspectionDate(request.getEndOfInspectionDate()); // New field
-        car.setEndOfInsuranceDate(request.getEndOfInsuranceDate());   // New field
+        car.setEndOfInspectionDate(request.getEndOfInspectionDate());
+        car.setEndOfInsuranceDate(request.getEndOfInsuranceDate());
 
         Car updatedCar = carRepository.save(car);
         return mapToCarResponse(updatedCar);
@@ -72,16 +68,37 @@ public class CarService {
     private CarResponse mapToCarResponse(Car car) {
         return CarResponse.builder()
                 .id(car.getId())
-                .brand(car.getBrand())
-                .model(car.getModel())
                 .year(String.valueOf(car.getYear()))
                 .plateNumber(car.getPlateNumber())
-                .pricePerDay(String.valueOf(car.getPricePerDay()))
                 .status(car.getStatus().name())
-                .segment(car.getSegment().name())
-                .imageLink(car.getImageLink())
-                .endOfInspectionDate(car.getEndOfInspectionDate()) // New field
-                .endOfInsuranceDate(car.getEndOfInsuranceDate())   // New field
+                .endOfInspectionDate(car.getEndOfInspectionDate())
+                .endOfInsuranceDate(car.getEndOfInsuranceDate())
                 .build();
+    }
+
+    private boolean validateCar(Car car) {
+        if (!validateDate(car.getEndOfInspectionDate()) || !validateDate(car.getEndOfInsuranceDate())) {
+            return false;
+        }
+
+        LocalDate inspectionDate = LocalDate.parse(car.getEndOfInspectionDate());
+        LocalDate insuranceDate = LocalDate.parse(car.getEndOfInsuranceDate());
+
+        return !inspectionDate.isAfter(insuranceDate);
+    }
+
+    private boolean validateDate(String date) {
+        String regex = "\\d{4}-\\d{2}-\\d{2}";
+
+        if (!date.matches(regex)) {
+            return false;
+        }
+
+        try {
+            LocalDate.parse(date);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }

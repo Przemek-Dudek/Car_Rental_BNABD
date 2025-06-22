@@ -20,23 +20,9 @@ public class Car {
     @GeneratedValue
     private Integer id;
 
-    private String brand;
-    private String model;
     private int year;
     private String plateNumber;
-    private Double pricePerDay;
     private CarStatus status;
-    private CarSegment segment;
-    private String imageLink;
-    private String endOfInspectionDate; // New field
+    private String endOfInspectionDate;
     private String endOfInsuranceDate;
-}
-
-enum CarStatus {
-    AVAILABLE,
-    UNAVAILABLE
-}
-
-enum CarSegment {
-    A, B, C, D, E, F, J, M
 }
