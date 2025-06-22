@@ -35,7 +35,8 @@ public class SecurityConfiguration {
             "/v3/api-docs",
             "/swagger-resources",
             "/swagger-ui/**",
-            "/api/rental/cars/all"
+            "/api/rental/cars/all",
+            "/api/rental/models"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
