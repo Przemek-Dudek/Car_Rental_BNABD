@@ -6,11 +6,13 @@ import {
 } from '@mui/material';
 import './CarCard.css';
 import { useNavigate } from 'react-router-dom';
+import { addReservation, type ReservationDto } from "../../shared/reservationApi.ts";
 
 export interface CarData {
   id: number;
   brand: string;
-  model: string;
+  modelId: string;
+  modelName: string;
   year: string;
   plate_number: string;
   price_per_day: string;
@@ -20,6 +22,8 @@ export interface CarData {
   end_of_inspection_date: string;
   end_of_insurance_date: string;
 }
+
+
 
 // Przykładowe rezerwacje
 const reservations = [
@@ -63,6 +67,30 @@ const CarCard: React.FC<CarCardProps> = ({
     setEndDate(initialEndDate);
   };
 
+  const handleReservation = () => {
+    const reservation: ReservationDto = {
+      customerId: localStorage.getItem("customer_id"),
+      modelId: car.modelId,
+      startDate: startDate,
+      endDate: endDate,
+      status: "PENDING"
+    };
+
+    // Retrieve the access token from local storage (or wherever you store it)
+    const accessToken = localStorage.getItem('access_token') || '';
+
+    addReservation(reservation, accessToken)
+        .then(data => {
+          console.log("Reservation added successfully", data);
+        })
+        .catch(error => {
+          console.error("Error adding reservation", error);
+        })
+        .finally(
+            handleClose
+        )
+  };
+
   const isDateBlocked = (date: string) => {
     const d = new Date(date);
     return reservations.some(r => {
@@ -94,10 +122,10 @@ const CarCard: React.FC<CarCardProps> = ({
 
   return (
       <Card className="car-card">
-        <CardMedia className="car-card__media" image={car.image_link} title={`${car.brand} ${car.model}`} />
+        <CardMedia className="car-card__media" image={car.image_link} title={`${car.brand} ${car.modelName}`} />
         <CardContent className="car-card__content">
           <Typography variant="h6" component="div">
-            {car.brand} {car.model} ({car.year})
+            {car.brand} {car.modelName} ({car.year})
           </Typography>
           <Typography variant="body2">
             {car.segment} • {car.status === 'AVAILABLE' ? 'Dostępny' : car.status === 'RENTED' ? 'Wynajęty' : 'Nieaktywny'} • {car.plate_number}
@@ -176,7 +204,7 @@ const CarCard: React.FC<CarCardProps> = ({
           <DialogActions>
             <Button onClick={handleClose}>Anuluj</Button>
             <Button
-                onClick={handleClose}
+                onClick={handleReservation}
                 disabled={!startDate || !endDate || isDateBlocked(startDate) || isDateBlocked(endDate)}
             >
               Dokonaj wpłaty

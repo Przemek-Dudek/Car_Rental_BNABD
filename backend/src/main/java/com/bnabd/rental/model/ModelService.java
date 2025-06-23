@@ -72,6 +72,8 @@ public class ModelService {
                 .map(car -> CarResponse.builder()
                         .id(car.getId())
                         .year(String.valueOf(car.getYear()))
+                        .modelId(String.valueOf(car.getModel().getId()))
+                        .modelName(car.getModel().getModel())
                         .segment(String.valueOf(car.getModel().getSegment()))
                         .plateNumber(car.getPlateNumber())
                         .status(String.valueOf(car.getStatus()))

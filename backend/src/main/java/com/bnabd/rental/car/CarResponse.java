@@ -23,6 +23,10 @@ public class CarResponse {
     private String plateNumber;
     @JsonProperty("status")
     private String status;
+    @JsonProperty("modelId")
+    private String modelId;
+    @JsonProperty("modelName")
+    private String modelName;
     @JsonProperty("segment")
     private String segment;
     @JsonProperty("end_of_inspection_date")

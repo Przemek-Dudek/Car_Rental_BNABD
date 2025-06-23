@@ -22,6 +22,7 @@ public class ReservationService {
 
     public ReservationResponse addReservation(ReservationRequest request) {
         // Retrieve the model.
+        System.out.println(request);
         Model model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> new IllegalArgumentException("Model not found with id: " + request.getModelId()));
 
