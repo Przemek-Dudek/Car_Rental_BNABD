@@ -25,6 +25,8 @@ public class CarResponse {
     private String status;
     @JsonProperty("modelId")
     private String modelId;
+    @JsonProperty("price_per_day")
+    private String pricePerDay;
     @JsonProperty("modelName")
     private String modelName;
     @JsonProperty("segment")

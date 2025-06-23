@@ -64,8 +64,14 @@ public class ModelService {
                                         return !(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd));
                                     });
                             return !isReserved;
-                        }))
-                .collect(Collectors.toList());
+                        })
+                        .filter(car -> {
+                            LocalDate inspectionEnd = LocalDate.parse(car.getEndOfInspectionDate());
+                            LocalDate insuranceEnd = LocalDate.parse(car.getEndOfInsuranceDate());
+                            return inspectionEnd.isAfter(requestEnd) && insuranceEnd.isAfter(requestEnd);
+                        })
+                )
+                .toList();
 
         // Map the eligible Car entities to CarResponse DTOs.
         return finalAvailableCars.stream()
@@ -74,6 +80,7 @@ public class ModelService {
                         .year(String.valueOf(car.getYear()))
                         .modelId(String.valueOf(car.getModel().getId()))
                         .modelName(car.getModel().getModel())
+                        .pricePerDay(String.valueOf(car.getModel().getPricePerDay()))
                         .segment(String.valueOf(car.getModel().getSegment()))
                         .plateNumber(car.getPlateNumber())
                         .status(String.valueOf(car.getStatus()))

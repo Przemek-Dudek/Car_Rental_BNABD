@@ -50,8 +50,13 @@ public class ReservationService {
                                 // Check for an overlap.
                                 return !(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd));
                             })
-                            .collect(Collectors.toList());
+                            .toList();
                     return overlappingReservations.isEmpty();
+                })
+                .filter(car -> {
+                    LocalDate inspectionEnd = LocalDate.parse(car.getEndOfInspectionDate());
+                    LocalDate insuranceEnd = LocalDate.parse(car.getEndOfInsuranceDate());
+                    return inspectionEnd.isAfter(requestEnd) && insuranceEnd.isAfter(requestEnd);
                 })
                 .findFirst();
 
