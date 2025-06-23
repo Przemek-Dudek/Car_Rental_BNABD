@@ -75,22 +75,27 @@ public class ReservationService {
     }
 
     public ReservationResponse editReservation(ReservationRequest request) {
+        // Fetch the existing reservation.
         Reservation reservation = reservationRepository.findById(request.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found with id: " + request.getId()));
 
-        // Fetch the model for the updated reservation.
+        // Retrieve the model.
         Model model = modelRepository.findById(request.getModelId())
                 .orElseThrow(() -> new IllegalArgumentException("Model not found with id: " + request.getModelId()));
 
         LocalDate requestStart = LocalDate.parse(request.getStartDate());
         LocalDate requestEnd = LocalDate.parse(request.getEndDate());
 
+        if (requestStart.isAfter(requestEnd)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
+
         // Try to keep the current car if possible.
         Car currentCar = reservation.getCar();
         boolean currentCarSuitable = currentCar != null
                 && currentCar.getStatus() == CarStatus.AVAILABLE
-                && model.getReservations().stream()
-                .filter(r -> !r.getId().equals(reservation.getId())) // exclude the current reservation
+                && reservationRepository.findAll().stream()
+                .filter(r -> !r.getId().equals(reservation.getId()))
                 .filter(r -> r.getCar() != null && r.getCar().getId().equals(currentCar.getId())
                         && r.getStatus() != ReservationStatus.CANCELLED)
                 .noneMatch(r -> {
@@ -99,21 +104,23 @@ public class ReservationService {
                     return !(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd));
                 });
 
-        // If the current car is not suitable, look for another available car.
         if (!currentCarSuitable) {
+            // If the current car is not available for the updated period, search for another.
             Optional<Car> availableCar = model.getCars().stream()
                     .filter(car -> car.getStatus() == CarStatus.AVAILABLE)
                     .filter(car -> {
-                        boolean isReserved = model.getReservations().stream()
+                        // Query for overlapping reservations for this car.
+                        List<Reservation> overlappingReservations = reservationRepository.findAll().stream()
                                 .filter(r -> !r.getId().equals(reservation.getId()))
                                 .filter(r -> r.getCar() != null && r.getCar().getId().equals(car.getId())
                                         && r.getStatus() != ReservationStatus.CANCELLED)
-                                .anyMatch(r -> {
+                                .filter(r -> {
                                     LocalDate resStart = LocalDate.parse(r.getStartDate());
                                     LocalDate resEnd = LocalDate.parse(r.getEndDate());
                                     return !(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd));
-                                });
-                        return !isReserved;
+                                })
+                                .collect(Collectors.toList());
+                        return overlappingReservations.isEmpty();
                     })
                     .findFirst();
 
@@ -124,6 +131,7 @@ public class ReservationService {
             reservation.setCar(availableCar.get());
         }
 
+        // Update rest of the reservation fields.
         reservation.setModel(model);
         reservation.setUserId(request.getCustomerId());
         reservation.setStartDate(request.getStartDate());
