@@ -69,6 +69,7 @@ public class CarService {
         return CarResponse.builder()
                 .id(car.getId())
                 .year(String.valueOf(car.getYear()))
+                .segment(String.valueOf(car.getModel().getSegment()))
                 .plateNumber(car.getPlateNumber())
                 .status(car.getStatus().name())
                 .endOfInspectionDate(car.getEndOfInspectionDate())

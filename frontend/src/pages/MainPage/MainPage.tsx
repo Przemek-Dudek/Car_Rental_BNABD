@@ -6,7 +6,7 @@ import {
   MenuItem,
   Button
 } from '@mui/material';
-import { getAllCars } from '../../shared/carApi';
+import { getAllCars, getAvailableCars } from '../../shared/carApi';
 
 // const carList: CarData[] = [
 //   {
@@ -82,9 +82,11 @@ const MainPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [cars, setCars] = useState<CarData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-
-  const isLoggedIn = !!localStorage.getItem('access_token');
+  const accessToken = localStorage.getItem('access_token');
+  const isLoggedIn = !!accessToken;
 
   useEffect(() => {
   getAllCars()
@@ -96,7 +98,18 @@ const MainPage: React.FC = () => {
     .finally(() => setLoading(false));
 }, []);
 
-  const filteredAndSortedCars = useMemo(() => {
+    const getCars = (startDate: string, endDate: string, segmentFilter: string, p0: null, accessToken: string | null) => {
+        getAvailableCars(startDate, endDate, segmentFilter, null, accessToken)
+            .then(data => {
+                console.log('API response:', data);
+                setCars(data);
+            })
+            .catch(() => setCars([]))
+            .finally(() => setLoading(false));
+    };
+
+
+    const filteredAndSortedCars = useMemo(() => {
     const filtered = cars
       .filter(car =>
         (`${car.brand} ${car.model}`.toLowerCase().includes(search.toLowerCase()))
@@ -206,6 +219,40 @@ const MainPage: React.FC = () => {
          className = "filters-element"
          >
           Resetuj
+        </Button>
+
+        <TextField
+            label="Data rozpoczęcia"
+            type="date"
+            fullWidth
+            margin="normal"
+            value={startDate}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStartDate(val);
+            }}
+            InputLabelProps={{ shrink: true }}
+        />
+
+        {/* Wybór daty zakończenia */}
+        <TextField
+            label="Data zakończenia"
+            type="date"
+            fullWidth
+            margin="normal"
+            value={endDate}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEndDate(val);
+            }}
+            InputLabelProps={{ shrink: true }}
+        />
+
+        <Button
+            variant="contained"
+            onClick={() => getCars(startDate, endDate, segmentFilter, null, accessToken)}
+        >
+          Szukaj
         </Button>
       </div>
 

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModelRequest {
     private Integer modelId;
+    private String segment;
     private String startDate;
     private String endDate;
 }
