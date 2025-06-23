@@ -1,9 +1,7 @@
 package com.bnabd.rental.car;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.bnabd.rental.model.Model;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +17,10 @@ public class Car {
     @Id
     @GeneratedValue
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private Model model;
 
     private int year;
     private String plateNumber;

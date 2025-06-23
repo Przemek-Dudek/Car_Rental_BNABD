@@ -1,7 +1,9 @@
 package com.bnabd.rental.model;
 
+import com.bnabd.rental.car.Car;
 import com.bnabd.rental.car.CarResponse;
 import com.bnabd.rental.car.CarStatus;
+import com.bnabd.rental.reservation.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,25 +28,32 @@ public class ModelService {
         LocalDate requestStart = LocalDate.parse(request.getStartDate());
         LocalDate requestEnd = LocalDate.parse(request.getEndDate());
 
-        if (model.getCar().getStatus() != CarStatus.AVAILABLE) {
-            return new ArrayList<>();
-        }
+        List<Car> availableCars = model.getCars().stream()
+                .filter(car -> car.getStatus() == CarStatus.AVAILABLE)
+                .toList();
 
-        if (model.getReservation() != null) {
-            LocalDate resStart = LocalDate.parse(model.getReservation().getStartDate());
-            LocalDate resEnd = LocalDate.parse(model.getReservation().getEndDate());
-            if (!(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd))) {
-                return new ArrayList<>();
-            }
-        }
+        List<Car> finalAvailableCars = availableCars.stream()
+                .filter(car -> {
+                    boolean isReserved = model.getReservations().stream()
+                            .filter(reservation -> reservation.getCar() != null
+                                    && reservation.getCar().getId().equals(car.getId())
+                                    && reservation.getStatus() != ReservationStatus.CANCELLED)
+                            .anyMatch(reservation -> {
+                                LocalDate resStart = LocalDate.parse(reservation.getStartDate());
+                                LocalDate resEnd = LocalDate.parse(reservation.getEndDate());
+                                return !(resEnd.isBefore(requestStart) || resStart.isAfter(requestEnd));
+                            });
+                    return !isReserved;
+                })
+                .toList();
 
-        CarResponse response = CarResponse.builder()
-                .id(model.getCar().getId())
-                .year(String.valueOf(model.getCar().getYear()))
-                .plateNumber(model.getCar().getPlateNumber())
-                .status(String.valueOf(model.getCar().getStatus()))
-                .build();
-
-        return List.of(response);
+        return finalAvailableCars.stream()
+                .map(car -> CarResponse.builder()
+                        .id(car.getId())
+                        .year(String.valueOf(car.getYear()))
+                        .plateNumber(car.getPlateNumber())
+                        .status(String.valueOf(car.getStatus()))
+                        .build())
+                .collect(Collectors.toList());
     }
 }

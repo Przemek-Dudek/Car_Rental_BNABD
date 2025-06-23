@@ -1,9 +1,8 @@
 package com.bnabd.rental.reservation;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.bnabd.rental.car.Car;
+import com.bnabd.rental.model.Model;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,14 @@ public class Reservation {
     private Integer id;
 
     private Integer userId;
-    private Integer modelId;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private Model model;
+
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
 
     private String startDate;
     private String endDate;
